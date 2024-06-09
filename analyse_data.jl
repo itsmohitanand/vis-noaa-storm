@@ -21,7 +21,7 @@ state_name = [n for n in data.NAME if !(n in remove_state)]
 
 # ----------------------- Define Axis, Menu and Slider ----------------------- #
 f = Figure(resolution=(1400, 1800))
-menu = Menu(f[1, 13:14], options=state_name, default="California")
+menu = Menu(f[1, 13:16], options=state_name, default="California")
 
 rticks = [0:30:359;] * 2 * pi / 360
 ax_map = Axis(f[1:9, 1:12], title="Damaging over storms between 2010-2024 N=$(size(storm_data)[1])", xgridvisible = false, ygridvisible = false)
@@ -33,27 +33,35 @@ ax_occurrence = PolarAxis(f[10:13, 7:12],
 ax_damage_crop = Axis(f[14:16, 1:6], xgridvisible = false, ygridvisible = false, ylabel = "Million Dollars", xlabel = "Year")
 ax_damage_property = Axis(f[14:16, 7:12], xgridvisible = false, ygridvisible = false, ylabel = "Million Dollars", xlabel = "Year")
 
-year_slider = IntervalSlider(f[3, 13:14], range=[2010:2024;], startvalues=(2010, 2024))
-crop_dmg_slider = IntervalSlider(f[5, 13:14], range=[0, 1000, 10000, 50000, 100000, 1000000, 1000000000], startvalues=(0, 1000000000))
-property_dmg_slider = IntervalSlider(f[7, 13:14], range=[0, 1000, 10000, 50000, 100000, 1000000, 1000000000], startvalues=(0, 1000000000))
+year_slider = IntervalSlider(f[3, 13:16], range=[2010:2024;], startvalues=(2010, 2024))
+crop_dmg_slider = IntervalSlider(f[5, 13:16], range=[0, 1000, 10000, 50000, 100000, 1000000, 1000000000], startvalues=(0, 1000000000))
+property_dmg_slider = IntervalSlider(f[7, 13:16], range=[0, 1000, 10000, 50000, 100000, 1000000, 1000000000], startvalues=(0, 1000000000))
 
 
 label_year = lift(year_slider.interval) do sl_interval
-    return string(sl_interval)
+    
+    start_year = sl_interval[1]
+    end_year = sl_interval[2]
+    
+    return "Period: $(start_year) to $(end_year)"
 end
 
 label_crop_dmg = lift(crop_dmg_slider.interval) do sl_interval
-    return string(sl_interval)
+    start_dmg = sl_interval[1]/1e6
+    end_dmg = sl_interval[2]/1e6
+    return "Crop Damage: $(start_dmg) M to $(end_dmg) M"
 end
 
 label_prop_dmg = lift(property_dmg_slider.interval) do sl_interval
-    return string(sl_interval)
+    start_dmg = sl_interval[1]/1e6
+    end_dmg = sl_interval[2]/1e6
+    return "Property Damage: $(start_dmg) M to $(end_dmg) M"
 end
 
 
-Label(f[2, 13:14], label_year, tellwidth=false)
-Label(f[4, 13:14], label_crop_dmg, tellwidth=false)
-Label(f[6, 13:14], label_prop_dmg, tellwidth=false)
+Label(f[2, 13:16], label_year)
+Label(f[4, 13:16], label_crop_dmg)
+Label(f[6, 13:16], label_prop_dmg)
 
 ax_obj = []
 # ------------------------------------ END ----------------------------------- #
